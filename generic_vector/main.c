@@ -24,7 +24,6 @@ int main()
         scanf("%d", &sales);
 
         Product *product = product_constructor(name, price, qtd);
-        // product_print(product);
         product_sell(product, sales);
         vector_push_back(products, product);
     }
