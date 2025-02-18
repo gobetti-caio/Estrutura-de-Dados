@@ -7,7 +7,6 @@
 
 // NODE IMPLEMENTATION //
 
-
 Node *node_construct(data_type value, Node *next)
 {
     Node* new = (Node*)calloc(1,sizeof(Node));
@@ -30,7 +29,6 @@ Node *node_next(Node *node)
 
 void node_destroy(Node *n)
 {
-    free(n->value);
     free(n);
 }
 
@@ -98,13 +96,13 @@ data_type forward_list_get(ForwardList *l, int i)
     {
         aux = aux->next;
     }
-    return aux;
+    return aux->value;
 }
 
 
 data_type forward_list_pop_front(ForwardList *l)
 {
-    Node* aux = l->head;
+    data_type aux = l->head->value;
     l->head = l->head->next;
 
     return aux;
@@ -150,7 +148,7 @@ void forward_list_cat(ForwardList *l, ForwardList *m)
     {   
         aux = aux->next;
     }
-    aux->next = m;
+    aux->next = m->head;
     free (m);
 }
 
