@@ -147,18 +147,8 @@ data_type list_pop_back(List *l)
     return aux;   
 }
 
-/**
- * @brief Create a new list given by the reverse of the given list.
- * @param l
- * Pointer to the double linked list.
- * @return List*
- * Pointer to the newly allocated double linked list.
- * 
- *  Destruir a list antiga ou n?
- */
 
- /*
-List *list_reverse(List *l) // sem destruir
+List *list_reverse(List *l)
 {
     List* reverse = list_construct();
 
@@ -167,19 +157,7 @@ List *list_reverse(List *l) // sem destruir
         list_push_front( reverse, list_get(l,i));
     }
 }
-*/
 
-List *list_reverse(List *l) // destruindo
-{
-    List* reverse = list_construct();
-
-    for (int i = 0; i < l->size; i++)
-    {
-        list_push_front( reverse, list_pop_front(l));
-    }
-
-    return reverse;
-}
 
 
 void list_clear(List *l)
@@ -263,9 +241,6 @@ ListIterator *list_back_iterator(List *l)
 }
 
 
-/**
-Por que usar ponteiro?
-*/
 data_type *list_iterator_next(ListIterator *it)
 {
     data_type* n = &(it->current->value); 
