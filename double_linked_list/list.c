@@ -173,7 +173,7 @@ void list_clear(List *l)
     l->head = l->last = NULL;
 }
 
-/*
+
 void list_remove(List *l, data_type val)
 {
     Node* aux = l->head;
@@ -185,18 +185,17 @@ void list_remove(List *l, data_type val)
             {
                 aux->next->prev = aux->prev;
 
-                l->size--
+                l->size--;
             }
             if (aux->prev)
             {
                 aux->prev->next = aux->next;
-                l->size--
+                l->size--;
             }
         }
     }
 
 }
-*/
 
 
 void list_cat(List *l, List *m)

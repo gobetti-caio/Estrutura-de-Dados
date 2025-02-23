@@ -55,19 +55,23 @@ void forward_list_push_back(ForwardList *l, data_type data)
 void forward_list_print(ForwardList *l, void (*print_fn)(data_type))
 {
     Node *aux = l->head;
+    printf("[");
     if (aux)
     {
         while (aux)
         {
             node_print(aux, print_fn);
             aux = aux->next;
+            if (aux)
+                printf(", ");
         }
     }
     else
     {
-        printf("\n");
+        printf("]\n");
         return;
     }
+    printf("]\n");
 }
 
 data_type forward_list_get(ForwardList *l, int i)
@@ -87,10 +91,13 @@ data_type forward_list_get(ForwardList *l, int i)
 
 data_type forward_list_pop_front(ForwardList *l)
 {
-    data_type aux = l->head->value;
+    Node *aux = l->head;
+    data_type val = l->head->value;
     l->head = l->head->next;
+    node_destroy(aux);
+    l->size--;
 
-    return aux;
+    return val;
 }
 
 data_type forward_list_pop_index(ForwardList *l, int index)
@@ -127,20 +134,16 @@ data_type forward_list_pop_index(ForwardList *l, int index)
     return n;
 }
 
-/**
- * @brief Create a new list given by the reverse of the given list.
- * @param l
- * Pointer to the linked list.
- * @return ForwardList*
- * Pointer to the newly allocated linked list.
- */
-/*ForwardList *forward_list_reverse(ForwardList *l)
+
+ForwardList *forward_list_reverse(ForwardList *l)
 {
-    ForwardList* reverse = forward_list_construct();
-
-
+    ForwardList *reverse = forward_list_construct();
+    while (l->size != 0)
+    {
+        forward_list_push_front(reverse, forward_list_pop_front(l));
+    }
+    return reverse;
 }
-*/
 
 void forward_list_clear(ForwardList *l)
 {
@@ -158,16 +161,30 @@ void forward_list_clear(ForwardList *l)
 void forward_list_remove(ForwardList *l, data_type val)
 {
     Node *aux = l->head;
-    Node *aux2;
-    while (aux)
+    Node *aux2 = NULL;
+
+    while (aux != NULL)
     {
-        aux2 = aux;
-        aux = aux->next;
         if (aux->value == val)
         {
-            aux2 = aux->next;
-            node_destroy(aux);
-            aux = aux2->next;
+            if (aux2 == NULL)
+            {
+                l->head = aux->next;
+                node_destroy(aux);
+                aux = l->head;
+            }
+            else
+            {
+                aux2->next = aux->next;
+                node_destroy(aux);
+                aux = aux2->next;
+            }
+            l->size--;
+        }
+        else
+        {
+            aux2 = aux;
+            aux = aux->next;
         }
     }
 }
@@ -184,48 +201,42 @@ void forward_list_remove(ForwardList *l, data_type val)
 
 void forward_list_cat(ForwardList *l, ForwardList *m)
 {
-    Node *aux = l->head;
-    while (aux->next)
+    while (m->size != 0)
     {
-        aux = aux->next;
+        forward_list_push_front(l, forward_list_pop_front(m));
     }
-    aux->next = m->head;
     free(m);
 }
 
-/**
- * @brief Sorts the linked list.
- * Sorts the linked list.
- * @param l
- * Pointer to the linked list.
- */
+
 void forward_list_sort(ForwardList *l)
 {
-    if (l->size < 1)
+    if (l->size < 2)
     {
         return;
     }
-    
-    Node *biggest = l->head;
-    data_type trader = NULL;
-    Node *aux = l->head;
 
-    for (int i = l->size ; i > 0 ; i--)
+    Node *current;
+    Node *nextNode;
+    data_type trader;
+    bool swap = true;
+
+    while (swap)
     {
-        for (int c = 0; c < i; c++)
+        swap = false;
+        current = l->head;
+
+        while (current->next != NULL)
         {
-            aux = aux->next;
-            if (biggest > aux)
+            nextNode = current->next;
+            if (current->value > nextNode->value)
             {
-                trader = aux->value;
-                aux->value = biggest->value;
-                biggest->value = trader;
-                biggest = aux;
+                trader = current->value;
+                current->value = nextNode->value;
+                nextNode->value = trader;
+                swap = true;
             }
-            else
-            {
-                biggest = aux;
-            }
+            current = current->next;
         }
     }
 }
