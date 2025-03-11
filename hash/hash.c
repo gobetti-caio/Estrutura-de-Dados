@@ -1,35 +1,34 @@
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
+
+
+unsigned long long hash_func(int base, const char *str)
+{
+    unsigned long long int hash = 0;
+    int size = strlen(str);
+    int exp = size - 1;
+
+    for (int i = 0; i < size; i++)
+    {
+        hash = hash + (str[i] * pow(base, exp));
+        exp--;
+    }
+    return hash;
+}
 
 int main() {
     char str[1024]; 
-    unsigned long long int s;
-    int n;
-    unsigned long long int hash = 0; 
-    int i = 0;
+    unsigned long long int hash;
+    int base, n;
 
     
-    scanf("%llu %d", &s, &n);
-    getchar(); 
+    scanf("%d %d %d", &base, &n);
     for (int k = 0; k < n; k++)
     {
-    
-        while (scanf("%c", &str[i]) == 1 && str[i] != '\n')
-        {
-            i++;
-        }
-        str[i] = '\0';
-    
-        for (int j = 0; j < i; j++)
-        {
-            hash += (str[j] * pow(s, i - j - 1));
-        }
-    
-        printf("%llu\n", hash);
-        hash = 0;
-        i = 0;
+        scanf("%s", str);
+        printf("%llu\n", hash_func(base, str));
     }
-    
 
     return 0;
 }
