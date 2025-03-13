@@ -19,7 +19,6 @@ unsigned long long hash_func(int base, const char *str)
 
 int main() {
     char str[1024]; 
-    unsigned long long int hash;
     int base, n;
 
     
