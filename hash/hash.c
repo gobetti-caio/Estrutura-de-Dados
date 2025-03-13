@@ -23,7 +23,7 @@ int main() {
     int base, n;
 
     
-    scanf("%d %d %d", &base, &n);
+    scanf("%d %d", &base, &n);
     for (int k = 0; k < n; k++)
     {
         scanf("%s", str);
