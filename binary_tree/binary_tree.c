@@ -148,7 +148,7 @@ KeyValPair *binary_tree_pop_max(BinaryTree *bt)
 void *binary_tree_get(BinaryTree *bt, void *key)
 {
     Node* aux = bt->root;
-    while (aux->left)
+    while (aux)
     {
         if(bt->cmp_fn(aux->pair->key, key) > 0)
             aux = aux->left;
@@ -189,7 +189,76 @@ void binary_tree_destroy(BinaryTree *bt)
 }
 
 
+void inorder_transversal_recursive(Node *node, Vector* vector)
+{
+    if(!node) return;
+    inorder_transversal_recursive(node->left, vector);
+    KeyValPair* temp = key_val_pair_construct(node->pair->key,node->pair->value);
+    vector_push_back(vector,temp);
+    inorder_transversal_recursive(node->right, vector);
+}
+
+Vector *binary_tree_inorder_traversal_recursive(BinaryTree *bt)
+{
+    Vector* v_inorder = vector_construct();
+    inorder_transversal_recursive(bt->root,v_inorder);
+    return v_inorder;
+}
+
+
+void preorder_traversal_recursive(Node *node, Vector* vector)
+{
+    if(!node) return;
+    KeyValPair* temp = key_val_pair_construct(node->pair->key,node->pair->value);
+    vector_push_back(vector,temp);
+    preorder_traversal_recursive(node->left,vector);
+    preorder_traversal_recursive(node->right,vector);
+
+}
+
+Vector *binary_tree_preorder_traversal_recursive(BinaryTree *bt)
+{
+    Vector* v_preorder = vector_construct();
+    preorder_traversal_recursive(bt->root,v_preorder);
+    return v_preorder;    
+}
+
+
+void postorder_traversal_recursive(Node *node, Vector* vector)
+{
+    if(!node) return;
+    postorder_traversal_recursive(node->left,vector);
+    postorder_traversal_recursive(node->right,vector);
+    KeyValPair* temp = key_val_pair_construct(node->pair->key,node->pair->value);
+    vector_push_back(vector,temp);
+}
+
+Vector *binary_tree_postorder_traversal_recursive(BinaryTree *bt)
+{
+    Vector* v_postorder = vector_construct();
+    postorder_traversal_recursive(bt->root,v_postorder);
+    return v_postorder;   
+}
+
+
 Vector *binary_tree_levelorder_traversal(BinaryTree *bt)
 {
-    
+    Vector* queue = vector_construct();
+    Vector* vector = vector_construct();
+
+    if(!bt->root) return vector;
+
+    vector_push_back(queue,bt->root);
+    Node* aux;
+
+    while (vector_size(queue) > 0)
+    {
+        aux = vector_pop_front(queue);
+        vector_push_back(vector, aux->pair);
+        if (aux->left) vector_push_back(queue, aux->left);
+        if (aux->right) vector_push_back(queue,aux->right);
+    }
+
+    vector_destroy(queue);
+    return vector;
 }
