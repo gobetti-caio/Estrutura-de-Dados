@@ -90,7 +90,7 @@ void binary_tree_add(BinaryTree *bt, void *key, void *value)
 }
 
 
-KeyValPair *binary_tree_pop_min(BinaryTree *bt)
+KeyValPair *binary_tree_pop_min(BinaryTree *bt)// why dosent work?
 {
     if (!bt->root) return NULL;
     
@@ -98,12 +98,7 @@ KeyValPair *binary_tree_pop_min(BinaryTree *bt)
     Node* parent = NULL;
     
     if (!aux->left)
-    {
         bt->root = aux->right;
-        KeyValPair *min = aux->pair;
-        free(aux);
-        return min;
-    }
 
     while(aux->left)
     {
@@ -111,7 +106,7 @@ KeyValPair *binary_tree_pop_min(BinaryTree *bt)
         aux = aux->left;
     }
 
-    parent->left = aux->right;
+    if(parent) parent->left = aux->right;
     KeyValPair *min = aux->pair;
     free(aux);
     return min;    
