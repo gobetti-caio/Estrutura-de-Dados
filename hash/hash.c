@@ -56,6 +56,11 @@ void hash_pair_destroy(HashTableItem *item)
 }
 
 
+int return_size(HashTable* h)
+{
+    return h->table_size;
+}
+
 
 HashTable *hash_table_construct(int table_size, HashFunction hash_fn, CmpFunction cmp_fn)
 {
@@ -198,12 +203,10 @@ HashTableIterator *hash_table_iterator(HashTable *h) {
     it->current_node = NULL;
     it->current_element = 0;
 
-    // Find the first non-empty bucket
     while (it->bucket_index < h->table_size && h->buckets[it->bucket_index] == NULL) {
         it->bucket_index++;
     }
 
-    // If a non-empty bucket is found, set the current node to the head of the list
     if (it->bucket_index < h->table_size) {
         it->current_node = h->buckets[it->bucket_index]->head;
     }
@@ -211,25 +214,23 @@ HashTableIterator *hash_table_iterator(HashTable *h) {
     return it;
 }
 
-// Function to check if the iterator has reached the end of the hash table
+
 int hash_table_iterator_is_over(HashTableIterator *it) {
     return (it->current_element >= it->hash_table->n_elements);
 }
 
-// Function to get the next key-value pair from the hash table
+
 HashTableItem *hash_table_iterator_next(HashTableIterator *it) {
     if (hash_table_iterator_is_over(it)) {
         return NULL;
     }
 
-    // If the current node is NULL, find the next non-empty bucket
     if (it->current_node == NULL) {
         it->bucket_index++;
         while (it->bucket_index < it->hash_table->table_size && it->hash_table->buckets[it->bucket_index] == NULL) {
             it->bucket_index++;
         }
 
-        // If a non-empty bucket is found, set the current node to the head of the list
         if (it->bucket_index < it->hash_table->table_size) {
             it->current_node = it->hash_table->buckets[it->bucket_index]->head;
         } else {
@@ -237,19 +238,29 @@ HashTableItem *hash_table_iterator_next(HashTableIterator *it) {
         }
     }
 
-    // Get the current key-value pair
     HashTableItem *pair = (HashTableItem *)it->current_node->value;
 
-    // Move to the next node in the list
     it->current_node = it->current_node->next;
-
-    // Increment the current element count
     it->current_element++;
 
     return pair;
 }
 
-// Function to destroy the iterator
+
 void hash_table_iterator_destroy(HashTableIterator *it) {
     free(it);
+}
+
+
+Vector *hash_to_vector(HashTable *h)
+{
+    Vector* v = vector_construct();
+    HashTableIterator *it = hash_table_iterator(h);
+
+    while (!hash_table_iterator_is_over(it))
+    {
+        HashTableItem *pair = hash_table_iterator_next(it);
+        vector_push_back(v, pair);
+    }
+    return v;
 }

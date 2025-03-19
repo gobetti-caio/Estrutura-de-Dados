@@ -1,13 +1,11 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "hash.h"
 
-int hash_str(HashTable *h, void *data)
+int hash_fn(HashTable *h, void *key)
 {
-    char *str = (char *)data;
-
+    char *str = (char *)key;
     long hash_val = 0;
     int base = 127;
 
@@ -22,35 +20,50 @@ int cmp_str(void *a, void *b)
     return strcmp((char *)a, (char *)b);
 }
 
-int main()
+int cmp_items(const void *a, const void *b)
 {
-    HashTable *h = hash_table_construct(11, hash_str, cmp_str);
+    const HashTableItem *item_a = *(const HashTableItem **)a;
+    const HashTableItem *item_b = *(const HashTableItem **)b;
+    return strcmp(item_a->key, item_b->key);
+}
 
+int main() {
     int n;
-
     scanf("%d", &n);
 
-    for(int i = 0; i < n; i++) {
-        char *name = malloc(sizeof(char) * 100);
-        int *age = malloc(sizeof(int));
-        scanf("%s %d", name, age);
-        void *prev = hash_table_set(h, name, age);
-        if(prev != NULL) {
-            free(prev);
-            free(name);
+    int table_size = 1000; 
+    HashTable *hash_table = hash_table_construct(table_size, hash_fn, cmp_str);
+
+    char temp[100];
+    for (int i = 0; i < n; i++) {
+        scanf("%s", temp);
+
+        void *val = hash_table_get(hash_table, temp);
+        if (val)
+        {
+            int *count = (int *)val;
+            (*count)++;
+        }
+        else
+        {
+            char *name = strdup(temp);
+            int *count = malloc(sizeof(int));
+            *count = 1;
+            hash_table_set(hash_table, name, count);
         }
     }
 
-    HashTableIterator *it = hash_table_iterator(h);
+    Vector *v = hash_to_vector(hash_table);
+    vector_sort(v, cmp_items);
 
-    while (!hash_table_iterator_is_over(it))
-    {
-        HashTableItem *pair = hash_table_iterator_next(it);
-        printf("%s: %d\n", (char *)pair->key, *(int *)pair->val);
+    int size = vector_size(v);
+    for(int i = 0; i < size; i++) {
+        void *pair = vector_pop_front(v);
+        printf("%s %d\n", (char *)((HashTableItem *)pair)->key, *(int *)((HashTableItem *)pair)->val);
     }
 
-    hash_table_iterator_destroy(it);
-    hash_table_destroy(h);
+    vector_destroy(v);
+    hash_table_destroy(hash_table);
 
     return 0;
 }

@@ -1,4 +1,3 @@
-
 #ifndef _HASH_TABLE_H_
 #define _HASH_TABLE_H_
 
@@ -14,6 +13,8 @@ typedef struct
 } HashTableItem;
 
 typedef struct HashTableIterator HashTableIterator;
+
+#include "vector.h"
 
 // constroi a hash
 HashTable *hash_table_construct(int table_size, HashFunction hash_fn, CmpFunction cmp_fn);
@@ -48,5 +49,9 @@ HashTableItem *hash_table_iterator_next(HashTableIterator *it);
 
 // desaloca o iterador da tabela hash
 void hash_table_iterator_destroy(HashTableIterator *it);
+
+Vector *hash_to_vector(HashTable *h);
+
+int return_size(HashTable* h);
 
 #endif
